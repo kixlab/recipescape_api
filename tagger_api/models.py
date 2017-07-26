@@ -14,7 +14,7 @@ class Recipe(models.Model):
         return self.title
 
     """
-    An element of instructions field is a step
+    An element of instructions field is a step.
     Each step looks like
     {
         "sentences": [
@@ -22,7 +22,6 @@ class Recipe(models.Model):
             { "tokens": [ { "text": "Reduce", "after: " ", "pos": "NN" }, ...
         ]
     }
-    
     """
 
 
