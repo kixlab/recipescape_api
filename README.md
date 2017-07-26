@@ -1,4 +1,6 @@
-# Tagger API
+# Recipescape API
+
+## Tagger API
 
 ### How to insert recipes to DB
 
