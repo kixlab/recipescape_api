@@ -26,10 +26,10 @@ class Recipe(models.Model):
 
 
 class Annotation(models.Model):
-    recipe_id = models.ForeignKey(Recipe)
+    recipe = models.ForeignKey(Recipe, to_field='origin_id')
     annotator = models.CharField(max_length=100, blank=False)
-    annotated_at = models.DateField(auto_now_add=True)
+    annotated_at = models.DateTimeField(auto_now_add=True)
     annotations = pgfields.JSONField()
 
     def __str__(self):
-        return self.recipe_id.title + "_" + self.annotated_at.__str__()
+        return self.recipe.title + "_" + self.annotated_at.__str__()

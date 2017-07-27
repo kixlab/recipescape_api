@@ -2,6 +2,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+import json
 
 from tagger_api.models import Recipe, Annotation
 
@@ -24,8 +25,10 @@ def get_recipe(request, recipe_id):
 
 @method_decorator(csrf_exempt, name='dispatch')
 def save_annotation(request, recipe_id):
-    annotation = Annotation.objects.create(recipe_id=recipe_id,
-                                           annotator=request.POST['annotator'],
-                                           annotation=request.POST['annotation'])
+    data = json.loads(request.body)
+    recipe = Recipe.objects.get(origin_id=recipe_id)
+    annotation = Annotation.objects.create(recipe=recipe,
+                                           annotator=data['annotator'],
+                                           annotations=data['annotation'])
     annotation.save()
     return HttpResponse(status=200)
