@@ -15,10 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 from tagger_api import urls as tagger_urls
+from recipescape_api.views import home_view
 
 urlpatterns = [
+    url(r'^$', home_view, name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'^tagger/', include(tagger_urls)),
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
+    url(r'^logout/$', auth_views.logout),
 ]
