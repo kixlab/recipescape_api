@@ -1,21 +1,23 @@
 import json
 from tagger_api.models import Recipe
-from pycorenlp import StanfordCoreNLP
-nlp = StanfordCoreNLP('http://localhost:9000')
+import requests
+from urllib.parse import quote
+
+parser_host = 'http://localhost:9000/'
+parser_option = "{'annotators': 'tokenize,ssplit,pos', 'outputFormat': 'json'}"
+parser_option_encoded = quote(parser_option)
+parser_url = parser_host + "?properties=" + parser_option_encoded
 
 def process_recipe(file_path, group_name):
     with open(file_path) as f:
         data = json.load(f)
-    print(file_path)
 
     instructions = []
     for step in data['instructions']:
-        parsed_resp = nlp.annotate(step, properties={
-            'annotators': 'pos',
-            'outputFormat': 'json'
-        })
-        if type(parsed_resp) is str:
-            parsed_resp = json.loads(parsed_resp.replace('\u0000', ''), encoding='utf-8', strict=False)
+
+        resp = requests.post(parser_url, data=step.encode('utf-8'))
+        resp.encoding = 'utf-8'
+        parsed_resp = json.loads(resp.text.replace('\u0000', ''), strict=False)
         instructions.append(parsed_resp["sentences"])
 
     new_recipe = Recipe.objects.create(title=data['name'],

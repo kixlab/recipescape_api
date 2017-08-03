@@ -128,6 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'recipescape-tagger', 'build'),
+    os.path.join(BASE_DIR, 'recipescape-tagger', 'build', 'static'),
+)
 
 # Django-allauth
 AUTHENTICATION_BACKENDS = (
@@ -146,4 +150,4 @@ SOCIALACCOUNT_PROVIDERS = {
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL= 'home'
+LOGOUT_REDIRECT_URL = 'home'
