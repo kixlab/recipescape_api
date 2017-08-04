@@ -146,8 +146,9 @@ SITE_ID = 1
 
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
-        'SCOPE': ['email'],
-        'METHOD': 'js-sdk'
+        'SCOPE': ['name'],
+        'METHOD': 'js-sdk',
+	'VERIFIED_EMAIL': True,
     }
 }
 
@@ -158,4 +159,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+SOCIALACCOUNT_QUERY_EMAIL = False
 
