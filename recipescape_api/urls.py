@@ -17,13 +17,13 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from tagger_api import urls as tagger_urls
-from recipescape_api.views import home_view, FacebookLogin
+from recipescape_api.views import FacebookLogin
 
 urlpatterns = [
-    url(r'^$', home_view, name='home'),
+    # url(r'^$', home_view, name='home'),
     url(r'^admin/', admin.site.urls),
+    url(r'^rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login'),
     url(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/facebook/$', FacebookLogin),
     url(r'^tagger/', include(tagger_urls)),
     url(r'^accounts/', include('allauth.urls')),
 ]

@@ -24,7 +24,7 @@ SECRET_KEY = '!$=_x5bta6)uha@-m21u_i-y)h)!s*maucg#l%l-9@!ac@d&j2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -112,9 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# CORS
-CORS_ORIGIN_ALLOW_ALL = True
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -143,6 +140,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 SITE_ID = 1
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -152,6 +151,11 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+REST_SESSION_LOGIN = False
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
+
