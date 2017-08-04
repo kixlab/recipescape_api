@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 import django.contrib.postgres.fields as pgfields
 from django.db import models
 
@@ -28,6 +29,7 @@ class Recipe(models.Model):
 class Annotation(models.Model):
     recipe = models.ForeignKey(Recipe, to_field='origin_id')
     annotator = models.CharField(max_length=100, blank=False)
+    worker = models.ForeignKey(User, editable=False, default=1)
     annotated_at = models.DateTimeField(auto_now_add=True)
     annotations = pgfields.JSONField()
 

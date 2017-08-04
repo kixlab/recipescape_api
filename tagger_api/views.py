@@ -1,6 +1,6 @@
 import json
 
-from rest_framework import status
+from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,7 +16,6 @@ def new_recipe(request):
     :return: Recipe
     """
     fresh_recipe = Recipe.objects.filter(annotation__isnull=True).first()
-    print(fresh_recipe)
     serializer = RecipeSerializer(fresh_recipe, many=False)
     return Response(serializer.data)
 
@@ -34,19 +33,23 @@ class AnnotationView(APIView):
     (GET) List all annotations for a recipe
     (POST) Save annotation for a recipe
     """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
     def get(self, request, recipe_id):
-        annotations = Annotation.objects.get(recipe=recipe_id)
+        annotations = Annotation.objects.filter(recipe=recipe_id)
         serializer = AnnotationSerializer(annotations, many=True)
         return Response(serializer.data)
 
     def post(self, request, recipe_id):
         data = json.loads(request.body)
+        print(request.user.get_username())
         try:
             recipe = Recipe.objects.get(origin_id=recipe_id)
         except Recipe.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         annotation = Annotation.objects.create(recipe=recipe,
                                                annotator=data['annotator'],
+                                               worker=request.user,
                                                annotations=data['annotation'])
         annotation.save()
         return Response(status=status.HTTP_201_CREATED)
