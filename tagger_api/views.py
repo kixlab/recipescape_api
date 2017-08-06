@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from tagger_api.models import Recipe, Annotation
 from tagger_api.serializers import RecipeSerializer, AnnotationSerializer
 
+
 @api_view(['GET'])
 def new_recipe(request):
     """
@@ -27,6 +28,26 @@ def get_recipe(request, recipe_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
     serializer = RecipeSerializer(recipe, many=False)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_userinfo(request, worker_id):
+    """
+    Count the number of recipe processed by given worker
+    :param request:
+    :param worker_id:
+    :return: (Recipe count, Annotation count)
+    """
+    annotations = Annotation.objects.filter(worker_id=worker_id)
+    annotation_count = annotations.count()
+    recipe_count = annotations.distinct("recipe_id").count()
+
+    return Response({
+        "count": {
+            "recipe": recipe_count,
+            "annotation": annotation_count,
+        }
+    })
 
 class AnnotationView(APIView):
     """
