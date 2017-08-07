@@ -1,7 +1,9 @@
 import json
+import datetime
 
+from django.utils import timezone
 from rest_framework import permissions, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,9 +18,16 @@ def new_recipe(request):
     :param request:
     :return: Recipe
     """
-    fresh_recipe = Recipe.objects.filter(annotation__isnull=True).first()
+    dt_10mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=10)
+    fresh_recipe = Recipe.objects.filter(annotation__isnull=True) \
+                                 .filter(last_assigned__lte=dt_10mins_ago) \
+                                 .first()
+    fresh_recipe.last_assigned = timezone.now()
+    print(fresh_recipe.last_assigned)
+    fresh_recipe.save()
     serializer = RecipeSerializer(fresh_recipe, many=False)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def get_recipe(request, recipe_id):
@@ -31,23 +40,22 @@ def get_recipe(request, recipe_id):
 
 
 @api_view(['GET'])
-def get_userinfo(request, worker_id):
+@permission_classes((permissions.IsAuthenticated, ))
+def get_userinfo(request):
     """
     Count the number of recipe processed by given worker
     :param request:
-    :param worker_id:
     :return: (Recipe count, Annotation count)
     """
-    annotations = Annotation.objects.filter(worker_id=worker_id)
-    annotation_count = annotations.count()
+    annotations = Annotation.objects.filter(worker_id=request.user.id)
     recipe_count = annotations.distinct("recipe_id").count()
 
     return Response({
         "count": {
             "recipe": recipe_count,
-            "annotation": annotation_count,
         }
     })
+
 
 class AnnotationView(APIView):
     """

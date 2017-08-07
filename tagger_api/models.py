@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 import django.contrib.postgres.fields as pgfields
 from django.db import models
+from django.utils import timezone
 
 
 class Recipe(models.Model):
@@ -10,6 +11,7 @@ class Recipe(models.Model):
     image_url = models.URLField()
     ingredients = pgfields.ArrayField(models.TextField())
     instructions = pgfields.JSONField()
+    last_assigned = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title
