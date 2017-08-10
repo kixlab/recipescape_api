@@ -17,6 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from tagger_api import urls as tagger_urls
+from recipe_api import urls as recipe_urls
 from recipescape_api.views import FacebookLogin
 
 urlpatterns = [
@@ -25,5 +26,6 @@ urlpatterns = [
     url(r'^rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login'),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^tagger/', include(tagger_urls)),
+    url(r'^recipe/', include(recipe_urls)),
     url(r'^accounts/', include('allauth.urls')),
 ]

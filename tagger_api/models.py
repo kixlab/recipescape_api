@@ -11,6 +11,7 @@ class Recipe(models.Model):
     image_url = models.URLField()
     ingredients = pgfields.ArrayField(models.TextField())
     instructions = pgfields.JSONField()
+    sentences = pgfields.ArrayField(models.TextField())
     last_assigned = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

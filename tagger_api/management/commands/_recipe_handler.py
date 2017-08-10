@@ -13,17 +13,24 @@ def process_recipe(file_path, group_name):
         data = json.load(f)
 
     instructions = []
+    sentences = []
     for step in data['instructions']:
 
         resp = requests.post(parser_url, data=step.encode('utf-8'))
         resp.encoding = 'utf-8'
         parsed_resp = json.loads(resp.text.replace('\u0000', ''), strict=False)
         instructions.append(parsed_resp["sentences"])
+        for tokens in parsed_resp["sentences"]:
+            sentence = ""
+            for token in tokens['tokens']:
+                sentence += token['originalText'] + token['after']
+            sentences.append(sentence)
 
     new_recipe = Recipe.objects.create(title=data['name'],
                                        image_url=data['image_addr'],
                                        origin_id=data['id'],
                                        ingredients=data['ingredients'],
                                        instructions={"instructions": instructions},
+                                       sentences=sentences,
                                        group_name=group_name)
     new_recipe.save()
