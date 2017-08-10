@@ -18,11 +18,12 @@ from django.contrib import admin
 
 from tagger_api import urls as tagger_urls
 from recipe_api import urls as recipe_urls
-from recipescape_api.views import FacebookLogin
+from recipescape_api.views import FacebookLogin, GoogleLogin
 
 urlpatterns = [
     # url(r'^$', home_view, name='home'),
     url(r'^admin/', admin.site.urls),
+    url(r'^rest-auth/google/$', GoogleLogin.as_view(), name='goog_login'),
     url(r'^rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login'),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^tagger/', include(tagger_urls)),

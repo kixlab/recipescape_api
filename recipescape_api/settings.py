@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google'
 ]
 
 MIDDLEWARE = [
@@ -150,6 +151,9 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['name'],
         'METHOD': 'js-sdk',
 	'VERIFIED_EMAIL': True,
+    },
+    'google': {
+        'SCOPE': ['profile', 'email'],
     }
 }
 
