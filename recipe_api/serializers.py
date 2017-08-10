@@ -1,6 +1,8 @@
+from rest_framework import serializers
+
 from recipe_api.models import Clustering
 from tagger_api.models import Recipe
-from rest_framework import serializers
+
 
 class RecipeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -10,4 +12,4 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
 class ClusteringSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Clustering
-        fields = ('title', 'dish_name', 'points')
+        fields = ('id', 'title', 'dish_name', 'points')

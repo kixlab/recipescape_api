@@ -18,5 +18,11 @@ docker run -p 9000:9000 --name coreNLP --rm -i -t motiz88/corenlp
 
 2. Run insert script. Let's say that we want to put recipes for potato salad
 ```commandline
-python manage.py import_recipe --json_dirs ./recipes/potato_salad --name potato_salad
+python manage.py import_recipe --json_dirs ./recipes/potato_salad --name potatosalad
 ```
+
+3. Run cluster script. For dummy cluster,
+```commandline
+python manage.py make_cluster --title potato_dummy --dishname potatosalad
+```
+Check out `recipe_api/management/commans/make_cluster.py` and `_dummy_cluster.py` for writing real clustering scripts

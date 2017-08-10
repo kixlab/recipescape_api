@@ -1,6 +1,7 @@
-from sklearn.cluster import KMeans
-import numpy as np
 import random
+
+import numpy as np
+from sklearn.cluster import KMeans
 
 from recipe_api.models import Clustering
 from tagger_api.models import Recipe
@@ -22,6 +23,6 @@ def run_cluster(title, dish_name):
         points.append(point)
 
     cluster_result = Clustering.objects.create(title=title,
-                              dish_name=dish_name,
-                              points=points)
+                                               dish_name=dish_name,
+                                               points=points)
     cluster_result.save()
