@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tagger_api.apps.TaggerApiConfig',
+    'recipe_api.apps.RecipeApiConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',

@@ -14,7 +14,6 @@ def get_recipe(request, recipe_id):
 
 @api_view(['GET'])
 def get_dish(request, dish):
-    print(dish)
     recipes = get_list_or_404(Recipe, group_name=dish)
     serializer = RecipeSerializer(recipes, many=True)
     return Response(serializer.data)
