@@ -1,7 +1,10 @@
 import json
-from tagger_api.models import Recipe
-import requests
 from urllib.parse import quote
+
+import requests
+from django.db import utils as db_utils
+
+from tagger_api.models import Recipe
 
 parser_host = 'http://localhost:9000/'
 parser_option = "{'annotators': 'tokenize,ssplit,pos', 'outputFormat': 'json'}"
@@ -26,11 +29,14 @@ def process_recipe(file_path, group_name):
                 sentence += token['originalText'] + token['after']
             sentences.append(sentence)
 
-    new_recipe = Recipe.objects.create(title=data['name'],
+    try:
+        new_recipe = Recipe.objects.create(title=data['name'],
                                        image_url=data['image_addr'],
                                        origin_id=data['id'],
                                        ingredients=data['ingredients'],
                                        instructions={"instructions": instructions},
                                        sentences=sentences,
                                        group_name=group_name)
-    new_recipe.save()
+        new_recipe.save()
+    except db_utils.IntegrityError:
+        pass
