@@ -59,3 +59,18 @@ def get_trees(request, dish):
         'tree': tree_util.make_tree(annotation.recipe, annotation)
     } for annotation in annotations]
     return Response(trees)
+
+@api_view(['GET'])
+def get_nodes(request, dish):
+    """
+    Return list of action and ingredients for each recipe
+    """
+    annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
+    nodes = []
+    for annotation in annotations:
+        tree = tree_util.make_tree(annotation.recipe, annotation)
+        actions = set([t['word'] for t in tree])
+        ingredients = set([item for t in tree for item in t['ingredient']])
+        nodes.append({'id': annotation.recipe.origin_id, 'actions': actions, 'ingredients': ingredients})
+    return Response(nodes)
+
