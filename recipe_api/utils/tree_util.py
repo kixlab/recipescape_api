@@ -1,3 +1,10 @@
+
+def make_node(recipe, annotation):
+    tree = make_tree(annotation.recipe, annotation)
+    actions = [t['word'] for t in tree]
+    ingredients = [item for t in tree for item in t['ingredient']]
+    return {'actions': actions, 'ingredients': ingredients }
+
 def make_tree(recipe, annotation):
     tags = annotation.annotations
     instructions = recipe.instructions['instructions']
