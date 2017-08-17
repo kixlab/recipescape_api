@@ -11,6 +11,7 @@ parser_option = "{'annotators': 'tokenize,ssplit,pos', 'outputFormat': 'json'}"
 parser_option_encoded = quote(parser_option)
 parser_url = parser_host + "?properties=" + parser_option_encoded
 
+
 def process_recipe(file_path, group_name):
     with open(file_path) as f:
         data = json.load(f)

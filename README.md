@@ -23,6 +23,6 @@ python manage.py import_recipe --json_dirs ./recipes/potato_salad --name potatos
 
 3. Run cluster script. For dummy cluster,
 ```commandline
-python manage.py make_cluster --title potato_dummy --dishname potatosalad
+python manage.py make_cluster --title potatosalad_dummy --dishname potatosalad
 ```
 Check out `recipe_api/management/commans/make_cluster.py` and `_dummy_cluster.py` for writing real clustering scripts

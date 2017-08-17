@@ -21,6 +21,7 @@ def new_recipe(request):
     dt_10mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=10)
     fresh_recipe = Recipe.objects.filter(annotation__isnull=True) \
                                  .filter(last_assigned__lte=dt_10mins_ago) \
+                                 .order_by('group_name') \
                                  .first()
     fresh_recipe.last_assigned = timezone.now()
     print(fresh_recipe.last_assigned)
