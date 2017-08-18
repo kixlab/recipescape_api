@@ -7,6 +7,7 @@ class Clustering(models.Model):
     title = models.TextField()
     dish_name = models.TextField()
     points = pgfields.JSONField(default=list([]))
+    centers = pgfields.JSONField(default=list([]))
 """
 each point looks like
 {
@@ -15,5 +16,9 @@ each point looks like
     "x": 140,
     "y": -110
 }
-"""
 
+and each cluster looks like
+{
+    [cluster_no]: <recipe_id>,
+}
+"""

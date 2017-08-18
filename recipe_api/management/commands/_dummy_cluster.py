@@ -22,7 +22,18 @@ def run_cluster(title, dish_name):
         }
         points.append(point)
 
+    print(kmeans.cluster_centers_)
+
+    centers = {}
+    for i, center in enumerate(kmeans.cluster_centers_):
+        distances = [(p['recipe_id'], ((p['x'] - center[0])**2 + (p['y'] - center[1])**2))
+                     for p in points
+                     if p['cluster_no'] == i]
+        median = min(distances, key=lambda p: p[1])
+        centers[i] = median[0]
+
     cluster_result = Clustering.objects.create(title=title,
                                                dish_name=dish_name,
-                                               points=points)
+                                               points=points,
+                                               centers=centers)
     cluster_result.save()

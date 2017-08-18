@@ -12,4 +12,4 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
 class ClusteringSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Clustering
-        fields = ('id', 'title', 'dish_name', 'points')
+        fields = ('id', 'title', 'dish_name', 'points', 'centers')
