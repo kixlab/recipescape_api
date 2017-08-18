@@ -89,10 +89,10 @@ def get_histograms(request, dish):
     For selected clusters,
     count distribution of top 3 actions and ingredients
     """
-    cluster_id = request.data['cluster_id']
+    cluster_name = request.data['cluster_name']
     selected_cluster = request.data['selected_clusters']
     # cluster = get_object_or_404(Clustering, title=cluster_name)
-    cluster = Clustering.objects.get(id=cluster_id)
+    cluster = Clustering.objects.filter(dish_name__exact=dish, title__icontains=cluster_name).first()
     selected_ids = [p["recipe_id"] for p in cluster.points if p["cluster_no"] in selected_cluster]
 
     # I should've normalized table more...ㅜㅜㅜㅜㅜ
