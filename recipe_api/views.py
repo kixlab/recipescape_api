@@ -99,8 +99,8 @@ def get_histograms(request, dish):
             action_dict[action] += 1
         for ingredient in node['ingredients']:
             ingredient_dict[ingredient] += 1
-    top3_actions = [kv[0] for kv in sorted(action_dict.items(), key=lambda p: p[1], reverse=True)[:3]]
-    top3_ingredients = [kv[0] for kv in sorted(ingredient_dict.items(), key=lambda p: p[1], reverse=True)[:3]]
+    top3_actions = sorted(action_dict.items(), key=lambda p: p[1], reverse=True)[:3]
+    top3_ingredients = sorted(ingredient_dict.items(), key=lambda p: p[1], reverse=True)[:3]
 
     # Get distribution of these top 3 actions and ingredients.
     # We normalize bins to size 9, except for the first 3 and the last 3 bins.
@@ -109,25 +109,21 @@ def get_histograms(request, dish):
     ingredient_bins = collections.defaultdict(lambda: [0 for _ in range(bin_size)])
     for node in nodes:
         for action in top3_actions:
+            action = action[0]
             try:
                 index = node['actions'].index(action)
             except ValueError:
                 continue
             normalized_index = index_normalizer(index, bin_size, len(node['actions']))
-            try:
-                action_bins[action][normalized_index] += 1
-            except IndexError:
-                continue
+            action_bins[action][normalized_index] += 1
         for ingredient in top3_ingredients:
+            ingredient = ingredient[0]
             try:
                 index = node['ingredients'].index(ingredient)
             except ValueError:
                 continue
             normalized_index = index_normalizer(index, bin_size, len(node['ingredients']))
-            try:
-                ingredient_bins[ingredient][normalized_index] += 1
-            except IndexError:
-                continue
+            ingredient_bins[ingredient][normalized_index] += 1
 
     return Response({
         "top3_actions": action_bins.items(),
