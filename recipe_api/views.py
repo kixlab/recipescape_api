@@ -99,56 +99,8 @@ def get_histograms(request, dish):
     annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
     annotations_selected = [annotation for annotation in annotations
                             if annotation.recipe.origin_id in selected_ids]
-    nodes = [tree_util.make_node(annotation.recipe, annotation) for annotation in annotations_selected]
 
-    # Get top 3 ingredients and actions
-    action_dict = collections.defaultdict(int)
-    ingredient_dict = collections.defaultdict(int)
-    for node in nodes:
-        for action in node['actions']:
-            action_dict[action] += 1
-        for ingredient in node['ingredients']:
-            ingredient_dict[ingredient] += 1
-    top3_actions = sorted(action_dict.items(), key=lambda p: p[1], reverse=True)[:3]
-    top3_ingredients = sorted(ingredient_dict.items(), key=lambda p: p[1], reverse=True)[:3]
+    trees = [tree_util.make_tree(annotation.recipe, annotation) for annotation in annotations_selected]
+    analysis_result = tree_util.analyze_trees(trees)
+    return Response(analysis_result)
 
-    # Get distribution of these top 3 actions and ingredients.
-    # We normalize bins to size 9, except for the first 3 and the last 3 bins.
-    bin_size = 9
-    action_bins = collections.defaultdict(lambda: [0 for _ in range(bin_size)])
-    ingredient_bins = collections.defaultdict(lambda: [0 for _ in range(bin_size)])
-    for node in nodes:
-        for action in top3_actions:
-            action = action[0]
-            try:
-                index = node['actions'].index(action)
-            except ValueError:
-                continue
-            normalized_index = index_normalizer(index, bin_size, len(node['actions']))
-            action_bins[action][normalized_index] += 1
-        for ingredient in top3_ingredients:
-            ingredient = ingredient[0]
-            try:
-                index = node['ingredients'].index(ingredient)
-            except ValueError:
-                continue
-            normalized_index = index_normalizer(index, bin_size, len(node['ingredients']))
-            ingredient_bins[ingredient][normalized_index] += 1
-
-    return Response({
-        "top3_actions": action_bins.items(),
-        "top3_ingredients": ingredient_bins.items(),
-    })
-
-
-
-def index_normalizer(index, len_bin, len_node):
-    if 0 <= index < 3:
-        return index
-    elif len_node - 3 <= index < len_node:
-        diff = len_node - len_bin
-        return index - diff
-    else:
-        ratio = (len_node - 3) / (len_bin - 3)
-        normalized_index = int(index / ratio)
-        return normalized_index
