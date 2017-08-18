@@ -74,6 +74,16 @@ def get_nodes(request, dish):
     return Response(nodes)
 
 @api_view(['POST'])
+def get_nodes_by_ids(request):
+    recipe_ids = request.data['recipe_ids']
+    annotations = Annotation.objects.filter(recipe__origin_id__in=recipe_ids).select_related('recipe')
+    nodes = []
+    for annotation in annotations:
+        node = tree_util.make_node(annotation.recipe, annotation)
+        nodes.append({'id': annotation.recipe.origin_id, 'actions': node['actions'], 'ingredients': node['ingredients']})
+    return Response(nodes)
+
+@api_view(['POST'])
 def get_histograms(request, dish):
     """
     For selected clusters,
