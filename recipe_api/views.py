@@ -61,6 +61,7 @@ def get_trees(request, dish):
     } for annotation in annotations]
     return Response(trees)
 
+
 @api_view(['GET'])
 def get_nodes(request, dish):
     """
@@ -73,6 +74,7 @@ def get_nodes(request, dish):
         nodes.append({'id': annotation.recipe.origin_id, 'actions': node['actions'], 'ingredients': node['ingredients']})
     return Response(nodes)
 
+
 @api_view(['POST'])
 def get_nodes_by_ids(request):
     recipe_ids = request.data['recipe_ids']
@@ -83,14 +85,26 @@ def get_nodes_by_ids(request):
         nodes.append({'id': annotation.recipe.origin_id, 'actions': node['actions'], 'ingredients': node['ingredients']})
     return Response(nodes)
 
+
 @api_view(['POST'])
 def get_histograms(request, dish):
     """
     For selected clusters,
     count distribution of top 3 actions and ingredients
     """
-    cluster_name = request.data['cluster_name']
-    selected_cluster = request.data['selected_clusters']
+    trees = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
+    analysis_result = tree_util.analyze_trees(trees)
+    return Response(analysis_result)
+
+
+@api_view(['POST'])
+def get_action_ingredient_histogram(request, dish):
+    trees = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
+    histogram = tree_util.count_tree_with_filter(trees, request.data['action'], request.data['ingredient'])
+    return Response(histogram)
+
+
+def _get_trees(dish, cluster_name, selected_cluster):
     # cluster = get_object_or_404(Clustering, title=cluster_name)
     cluster = Clustering.objects.filter(dish_name__exact=dish, title__icontains=cluster_name).first()
     selected_ids = [p["recipe_id"] for p in cluster.points if p["cluster_no"] in selected_cluster]
@@ -99,8 +113,7 @@ def get_histograms(request, dish):
     annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
     annotations_selected = [annotation for annotation in annotations
                             if annotation.recipe.origin_id in selected_ids]
-
     trees = [tree_util.make_tree(annotation.recipe, annotation) for annotation in annotations_selected]
-    analysis_result = tree_util.analyze_trees(trees)
-    return Response(analysis_result)
+
+    return trees
 

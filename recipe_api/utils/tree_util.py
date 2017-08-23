@@ -57,6 +57,16 @@ def analyze_trees(trees):
     return result
 
 
+def count_tree_with_filter(trees, action, ingredient):
+    bin_size = 9
+    bins = [0 for _ in range(bin_size)]
+    for tree in trees:
+        for index, t in enumerate(tree):
+            if t['word'] == action and ingredient in t['ingredient']:
+                bins[index_normalizer(index, bin_size, len(tree))] += 1
+    return bins
+
+
 def make_node(recipe, annotation):
     tree = make_tree(annotation.recipe, annotation)
     actions = [t['word'] for t in tree]
