@@ -39,17 +39,20 @@ def get_clusters(request, dish):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-def get_tree(request, recipe_id):
+@api_view(['POST'])
+def get_trees_by_ids(request):
     """
     :param request:
     :param recipe_id: origin_id of Recipe model
     :return: [(action, [ingredient])]
     """
-    annotation = get_object_or_404(Annotation, recipe=recipe_id)
-    recipe = Recipe.objects.get(origin_id=recipe_id)
-    nodes = tree_util.make_tree(recipe, annotation)
-    return nodes
+    recipe_ids = request.data['recipe_ids']
+    annotations = Annotation.objects.filter(recipe__origin_id__in=recipe_ids).select_related('recipe')
+    trees = [{
+        'id': annotation.recipe.origin_id,
+        'tree': tree_util.make_tree(annotation.recipe, annotation)
+    } for annotation in annotations]
+    return Response(trees)
 
 
 @api_view(['GET'])
