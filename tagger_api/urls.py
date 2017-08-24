@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^recipe/(\S+)', views.get_recipe),
     url(r'^annotation/(\S+)', views.AnnotationView.as_view()),
     url(r'^user$', views.get_userinfo),
+    url(r'^status$', views.leaderboard)
 ]

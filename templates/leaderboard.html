@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>Thanks for contribution :D</h3>
+    <table class="ui very basic collapsing celled table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Annotation Count</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.annotator }}</td>
+                <td>{{ user.annotation_count }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

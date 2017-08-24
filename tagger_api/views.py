@@ -1,6 +1,9 @@
 import json
 import datetime
 
+from django.db.models import Count
+from django.http import HttpResponse
+from django.template import loader
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view, permission_classes
@@ -83,3 +86,16 @@ class AnnotationView(APIView):
                                                annotations=data['annotation'])
         annotation.save()
         return Response(status=status.HTTP_201_CREATED)
+
+
+def leaderboard(request):
+    users = Annotation.objects.values('annotator')\
+                              .annotate(annotation_count=Count('annotator'))\
+                              .order_by('-annotation_count')
+    template = loader.get_template('leaderboard.html')
+    context = {
+        'users': users,
+    }
+    return HttpResponse(template.render(context, request))
+
+
