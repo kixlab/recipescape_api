@@ -92,9 +92,11 @@ def leaderboard(request):
     users = Annotation.objects.values('annotator')\
                               .annotate(annotation_count=Count('annotator'))\
                               .order_by('-annotation_count')
+    annotation_counts = Annotation.objects.count()
     template = loader.get_template('leaderboard.html')
     context = {
         'users': users,
+        'count': annotation_counts,
     }
     return HttpResponse(template.render(context, request))
 
