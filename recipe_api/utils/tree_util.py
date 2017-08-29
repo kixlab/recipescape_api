@@ -79,6 +79,7 @@ def make_tree(recipe, annotation):
     instructions = recipe.instructions['instructions']
     nodes = []
     current_node = {"word": "", "ingredient": []}
+    last_ingredient_index = [-1, -1, -1]
     for tag in tags:
         if current_node["word"] == "" and tag['tag'] == 0:
             current_node["word"] = get_word(instructions, tag['index'])
@@ -88,7 +89,15 @@ def make_tree(recipe, annotation):
         elif current_node["word"] == "" and tag['tag'] == 0:
             pass
         elif current_node["word"] != "" and tag['tag'] == 1:
-            current_node['ingredient'].append(get_word(instructions, tag['index']))
+            ingredient = get_word(instructions, tag['index'])
+            is_continued_ingredient = (
+                last_ingredient_index[0] == tag['index'][0] and last_ingredient_index[1] == tag['index'][1] and
+                last_ingredient_index[2] == tag['index'][2] - 1)
+            if is_continued_ingredient:
+                current_node['ingredient'][-1] += (' ' + ingredient)
+            else:
+                current_node['ingredient'].append(ingredient)
+            last_ingredient_index = tag['index']
     return nodes
 
 

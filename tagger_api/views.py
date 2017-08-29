@@ -125,7 +125,3 @@ def count_corrections(request, dishname):
         'tagged_action_pos_verb': tagged_action_pos_verb,
         'tagged_action_pos_nonverb': tagged_action_pos_nonverb,
     })
-
-
-
-
