@@ -107,7 +107,12 @@ def get_word(instructions, index):
     :param index: [int, int, int]
     :return:
     """
-    sentences  = instructions[index[0]]
-    tokens = sentences[index[1]]
-    word = tokens['tokens'][index[2]]['originalText']
+    token = get_token(instructions, index)
+    word = token['originalText']
     return word.lower()
+
+def get_token(instructions, index):
+    sentences = instructions[index[0]]
+    tokens = sentences[index[1]]
+    token = tokens['tokens'][index[2]]
+    return token

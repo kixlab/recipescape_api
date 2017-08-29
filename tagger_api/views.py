@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from recipe_api.utils import tree_util
 from tagger_api.models import Recipe, Annotation
 from tagger_api.serializers import RecipeSerializer, AnnotationSerializer
 
@@ -112,7 +113,8 @@ def count_corrections(request, dishname):
         for word in annotation.annotations:
             if word['tag'] is 0:
                 location = word['index']
-                pos = annotation.recipe.instructions['instructions'][location[0]][location[1]]['tokens'][location[2]]['pos']
+                token = tree_util.get_token(annotation.recipe.instructions['instructions'], location)
+                pos = token['pos']
                 if pos[0] is 'V':
                     tagged_action_pos_verb += 1
                 else:
