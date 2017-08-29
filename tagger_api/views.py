@@ -101,3 +101,31 @@ def leaderboard(request):
     return HttpResponse(template.render(context, request))
 
 
+@api_view(['GET'])
+def count_corrections(request, dishname):
+    annotations = Annotation.objects.filter(recipe__group_name=dishname).select_related('recipe')
+    recipe_counts = Recipe.objects.filter(group_name=dishname).count()
+    annotation_counts = len(annotations)
+    tagged_action_pos_verb = 0
+    tagged_action_pos_nonverb = 0
+    for annotation in annotations:
+        for word in annotation.annotations:
+            if word['tag'] is 0:
+                location = word['index']
+                pos = annotation.recipe.instructions['instructions'][location[0]][location[1]]['tokens'][location[2]]['pos']
+                if pos[0] is 'V':
+                    tagged_action_pos_verb += 1
+                else:
+                    tagged_action_pos_nonverb += 1
+
+    return Response({
+        'dishname': dishname,
+        'total_recipes': recipe_counts,
+        'tagged_recipes': annotation_counts,
+        'tagged_action_pos_verb': tagged_action_pos_verb,
+        'tagged_action_pos_nonverb': tagged_action_pos_nonverb,
+    })
+
+
+
+
