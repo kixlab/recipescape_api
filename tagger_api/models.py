@@ -13,6 +13,7 @@ class Recipe(models.Model):
     instructions = pgfields.JSONField()
     sentences = pgfields.ArrayField(models.TextField())
     last_assigned = models.DateTimeField(default=timezone.now)
+    is_unused = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
