@@ -1,5 +1,3 @@
-import collections
-import json
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,7 +21,7 @@ def get_recipes(request, dish):
     Return all recipes for given dish
     :param dish: Kind of recipe (e.g chocolate cookie, potato salad)
     """
-    recipes = get_list_or_404(Recipe, group_name=dish)
+    recipes = Recipe.objects.filter(group_name=dish, annotation__isnull=False)
     serializer = RecipeSerializer(recipes, many=True)
     return Response(serializer.data)
 
