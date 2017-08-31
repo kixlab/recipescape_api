@@ -13,7 +13,7 @@ def index_normalizer(index, len_bin, len_node):
         return normalized_index
 
 
-def analyze_trees(trees, cluster_labels):
+def analyze_trees(trees, cluster_labels, recipe_ids):
     """
     Return
     1) 3 most frequent actions, (and their 3 most co-occurring ingredient, histogram)
@@ -28,11 +28,12 @@ def analyze_trees(trees, cluster_labels):
     for tree in trees:
         for index, t in enumerate(tree):
             cluster_label = cluster_labels[index]
+            recipe_id = recipe_ids[index]
             normalized_index = index_normalizer(index, bin_size, len(tree))
             action = t['word']
-            action_bins[action][normalized_index].append(cluster_label)
+            action_bins[action][normalized_index].append((cluster_label, recipe_id))
             for ingredient in t['ingredient']:
-                ingredient_bins[ingredient][normalized_index].append(cluster_label)
+                ingredient_bins[ingredient][normalized_index].append((cluster_label, recipe_id))
                 action_ingredient_count[action][ingredient] += 1
                 ingredient_action_count[ingredient][action] += 1
 
@@ -47,7 +48,7 @@ def analyze_trees(trees, cluster_labels):
         result['actions'].append({
             "action": action,
             "histogram": map(len, action_bins[action]),
-            "histogram_detail": map(into_proportion, action_bins[action]),
+            "histogram_detail": action_bins[action],
             "neighbors": [p[0] for p in frequent_neighbors[:3]]
         })
     for ingredient in top3_ingredient:
@@ -55,7 +56,7 @@ def analyze_trees(trees, cluster_labels):
         result['ingredients'].append({
             "ingredient": ingredient,
             "histogram": map(len, ingredient_bins[ingredient]),
-            "histogram_detail": map(into_proportion, ingredient_bins[ingredient]),
+            "histogram_detail": ingredient_bins[ingredient],
             "neighbors": [p[0] for p in frequent_neighbors[:3]],
         })
     return result
@@ -123,8 +124,8 @@ def get_token(instructions, index):
     return token
 
 
-def into_proportion(items):
-    counter = collections.Counter(items)
-    total_count = sum(counter.values())
-    proportions = {k: v / total_count for k, v in counter.items()}
-    return proportions
+# def into_proportion(items):
+#     counter = collections.Counter(items)
+#     total_count = sum(counter.values())
+#     proportions = {k: v / total_count for k, v in counter.items()}
+#     return proportions

@@ -93,8 +93,8 @@ def get_histograms(request, dish):
     For selected clusters,
     count distribution of top 3 actions and ingredients
     """
-    trees, clusters = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
-    analysis_result = tree_util.analyze_trees(trees, clusters)
+    trees, clusters, recipe_ids = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
+    analysis_result = tree_util.analyze_trees(trees, clusters, recipe_ids)
     return Response(analysis_result)
 
 
@@ -120,7 +120,10 @@ def _get_trees(dish, cluster_name, selected_cluster):
     annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
     annotations_selected = [annotation for annotation in annotations
                             if annotation.recipe.origin_id in selected_ids]
-    trees = [tree_util.make_tree(annotation.recipe, annotation) for annotation in annotations_selected]
-    trees_cluster = [id_cluster_dict[annotation.recipe.origin_id] for annotation in annotations_selected]
-    return trees, trees_cluster
+    result = [(
+        tree_util.make_tree(annotation.recipe, annotation), # tree
+        id_cluster_dict[annotation.recipe.origin_id], # cluster
+        annotation.recipe.origin_id, # recipe_id
+    ) for annotation in annotations_selected]
 
+    return zip(*result)
