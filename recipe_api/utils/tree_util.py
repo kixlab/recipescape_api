@@ -13,29 +13,31 @@ def index_normalizer(index, len_bin, len_node):
         return normalized_index
 
 
-def analyze_trees(trees):
+def analyze_trees(trees, cluster_labels):
     """
     Return
     1) 3 most frequent actions, (and their 3 most co-occurring ingredient, histogram)
     2) 3 most frequent ingredients, (...)
     """
     bin_size = 9
-    action_bins = collections.defaultdict(lambda: [0 for _ in range(bin_size)])
-    ingredient_bins = collections.defaultdict(lambda: [0 for _ in range(bin_size)])
+    action_bins = collections.defaultdict(lambda: [[] for _ in range(bin_size)])
+    ingredient_bins = collections.defaultdict(lambda: [[] for _ in range(bin_size)])
     action_ingredient_count = collections.defaultdict(lambda: collections.defaultdict(int))
     ingredient_action_count = collections.defaultdict(lambda: collections.defaultdict(int))
 
     for tree in trees:
         for index, t in enumerate(tree):
+            cluster_label = cluster_labels[index]
+            normalized_index = index_normalizer(index, bin_size, len(tree))
             action = t['word']
-            action_bins[action][index_normalizer(index, bin_size, len(tree))] += 1
+            action_bins[action][normalized_index].append(cluster_label)
             for ingredient in t['ingredient']:
-                ingredient_bins[ingredient][index_normalizer(index, 9, len(tree))] += 1
+                ingredient_bins[ingredient][normalized_index].append(cluster_label)
                 action_ingredient_count[action][ingredient] += 1
                 ingredient_action_count[ingredient][action] += 1
 
-    actions_sorted = sorted(action_bins.items(), key=lambda p: sum(p[1]), reverse=True)
-    ingredients_sorted = sorted(ingredient_bins.items(), key=lambda p: sum(p[1]), reverse=True)
+    actions_sorted = sorted(action_bins.items(), key=lambda p: sum(map(len, p[1])), reverse=True)
+    ingredients_sorted = sorted(ingredient_bins.items(), key=lambda p: sum(map(len, p[1])), reverse=True)
     top3_action = [k[0] for k in actions_sorted[:3]]
     top3_ingredient = [k[0] for k in ingredients_sorted[:3]]
 
@@ -44,15 +46,17 @@ def analyze_trees(trees):
         frequent_neighbors = sorted(action_ingredient_count[action].items(), key=lambda p: p[1], reverse=True)
         result['actions'].append({
             "action": action,
-            "histogram": action_bins[action],
+            "histogram": map(len, action_bins[action]),
+            "histogram_detail": map(into_proportion, action_bins[action]),
             "neighbors": [p[0] for p in frequent_neighbors[:3]]
         })
     for ingredient in top3_ingredient:
         frequent_neighbors = sorted(ingredient_action_count[ingredient].items(), key=lambda p: p[1], reverse=True)
         result['ingredients'].append({
             "ingredient": ingredient,
-            "histogram": ingredient_bins[ingredient],
-            "neighbors": [p[0] for p in frequent_neighbors[:3]]
+            "histogram": map(len, ingredient_bins[ingredient]),
+            "histogram_detail": map(into_proportion, ingredient_bins[ingredient]),
+            "neighbors": [p[0] for p in frequent_neighbors[:3]],
         })
     return result
 
@@ -111,8 +115,16 @@ def get_word(instructions, index):
     word = token['originalText']
     return word.lower()
 
+
 def get_token(instructions, index):
     sentences = instructions[index[0]]
     tokens = sentences[index[1]]
     token = tokens['tokens'][index[2]]
     return token
+
+
+def into_proportion(items):
+    counter = collections.Counter(items)
+    total_count = sum(counter.values())
+    proportions = {k: v / total_count for k, v in counter.items()}
+    return proportions

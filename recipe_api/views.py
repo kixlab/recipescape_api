@@ -93,14 +93,14 @@ def get_histograms(request, dish):
     For selected clusters,
     count distribution of top 3 actions and ingredients
     """
-    trees = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
-    analysis_result = tree_util.analyze_trees(trees)
+    trees, clusters = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
+    analysis_result = tree_util.analyze_trees(trees, clusters)
     return Response(analysis_result)
 
 
 @api_view(['POST'])
 def get_action_ingredient_histogram(request, dish):
-    trees = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
+    trees, _ = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
     histogram = tree_util.count_tree_with_filter(trees, request.data['action'], request.data['ingredient'])
     return Response(histogram)
 
@@ -108,13 +108,19 @@ def get_action_ingredient_histogram(request, dish):
 def _get_trees(dish, cluster_name, selected_cluster):
     # cluster = get_object_or_404(Clustering, title=cluster_name)
     cluster = Clustering.objects.filter(dish_name__exact=dish, title__icontains=cluster_name).first()
-    selected_ids = [p["recipe_id"] for p in cluster.points if p["cluster_no"] in selected_cluster]
+
+    selected_ids = []
+    id_cluster_dict = {}
+    for p in cluster.points:
+        if p['cluster_no'] in selected_cluster:
+            selected_ids.append(p['recipe_id'])
+            id_cluster_dict[p['recipe_id']] = p['cluster_no']
 
     # I should've normalized table more...ㅜㅜㅜㅜㅜ
     annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
     annotations_selected = [annotation for annotation in annotations
                             if annotation.recipe.origin_id in selected_ids]
     trees = [tree_util.make_tree(annotation.recipe, annotation) for annotation in annotations_selected]
-
-    return trees
+    trees_cluster = [id_cluster_dict[annotation.recipe.origin_id] for annotation in annotations_selected]
+    return trees, trees_cluster
 
