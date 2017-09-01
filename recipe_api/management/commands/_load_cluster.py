@@ -11,14 +11,14 @@ def load_cluster(title, dish_name, points_path, centers_path):
         points.append({
             'x': float(recipe[1]),
             'y': float(recipe[2]),
-            'cluster_no': int(recipe[3]),
+            'cluster_no': int(recipe[3]) - 1,
             'recipe_id': recipe[0],
         })
 
     centers_np = np.load(centers_path)
     centers = {}
     for center in centers_np:
-        cluster_no = int(center[0][3])
+        cluster_no = int(center[0][3]) - 1
         center_id = center[0][0]
         centers[cluster_no] = center_id
 
