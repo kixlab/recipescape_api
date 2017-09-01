@@ -4,7 +4,7 @@
 
 ### How to insert recipes to DB
 
-Prepare DB and create `.env` file according to `env` in repo. `manage.py` loads environment variables from `.env` 
+Prepare DB and create `.env` file according to `env` in repo. `manage.py` and `wsgi.py` loads environment variables from `.env` 
 
 0. Install dependencies
 ```commandline
@@ -29,5 +29,5 @@ Check out `recipe_api/management/commans/make_cluster.py` and `_dummy_cluster.py
 
 4. Run using gunicorn
 ```commandline
-GUNICORN_CMD_ARGS="--workers=5" gunicorn recipescape_api.wsgi
+gunicorn -w 5 recipescape_api.wsgi
 ```

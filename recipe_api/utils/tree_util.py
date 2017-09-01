@@ -25,10 +25,10 @@ def analyze_trees(trees, cluster_labels, recipe_ids):
     action_ingredient_count = collections.defaultdict(lambda: collections.defaultdict(int))
     ingredient_action_count = collections.defaultdict(lambda: collections.defaultdict(int))
 
-    for tree in trees:
+    for tree_index, tree in enumerate(trees):
+        cluster_label = cluster_labels[tree_index]
+        recipe_id = recipe_ids[tree_index]
         for index, t in enumerate(tree):
-            cluster_label = cluster_labels[index]
-            recipe_id = recipe_ids[index]
             normalized_index = index_normalizer(index, bin_size, len(tree))
             action = t['word']
             action_bins[action][normalized_index].append((cluster_label, recipe_id))
@@ -39,11 +39,13 @@ def analyze_trees(trees, cluster_labels, recipe_ids):
 
     actions_sorted = sorted(action_bins.items(), key=lambda p: sum(map(len, p[1])), reverse=True)
     ingredients_sorted = sorted(ingredient_bins.items(), key=lambda p: sum(map(len, p[1])), reverse=True)
-    top3_action = [k[0] for k in actions_sorted[:3]]
-    top3_ingredient = [k[0] for k in ingredients_sorted[:3]]
+    # top3_action = [k[0] for k in actions_sorted[:3]]
+    all_actions = [k[0] for k in actions_sorted[:5]]
+    # top3_ingredient = [k[0] for k in ingredients_sorted[:3]]
+    all_ingredients = [k[0] for k in ingredients_sorted[:5]]
 
     result = {"actions": [], "ingredients": []}
-    for action in top3_action:
+    for action in all_actions:
         frequent_neighbors = sorted(action_ingredient_count[action].items(), key=lambda p: p[1], reverse=True)
         result['actions'].append({
             "action": action,
@@ -51,7 +53,7 @@ def analyze_trees(trees, cluster_labels, recipe_ids):
             "histogram_detail": action_bins[action],
             "neighbors": [p[0] for p in frequent_neighbors[:3]]
         })
-    for ingredient in top3_ingredient:
+    for ingredient in all_ingredients:
         frequent_neighbors = sorted(ingredient_action_count[ingredient].items(), key=lambda p: p[1], reverse=True)
         result['ingredients'].append({
             "ingredient": ingredient,
