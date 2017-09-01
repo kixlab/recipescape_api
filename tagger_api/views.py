@@ -22,13 +22,12 @@ def new_recipe(request):
     :param request:
     :return: Recipe
     """
-    dt_10mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=10)
+    dt_20mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=20)
     fresh_recipe = Recipe.objects.filter(annotation__isnull=True) \
-                                 .filter(last_assigned__lte=dt_10mins_ago) \
+                                 .filter(last_assigned__lte=dt_20mins_ago) \
                                  .order_by('group_name') \
                                  .first()
     fresh_recipe.last_assigned = timezone.now()
-    print(fresh_recipe.last_assigned)
     fresh_recipe.save()
     serializer = RecipeSerializer(fresh_recipe, many=False)
     return Response(serializer.data)

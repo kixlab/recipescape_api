@@ -100,13 +100,12 @@ def get_histograms(request, dish):
 
 @api_view(['POST'])
 def get_action_ingredient_histogram(request, dish):
-    trees, _ = _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
+    trees, clusters, recipe_ids= _get_trees(dish, request.data['cluster_name'], request.data['selected_clusters'])
     histogram = tree_util.count_tree_with_filter(trees, request.data['action'], request.data['ingredient'])
     return Response(histogram)
 
 
 def _get_trees(dish, cluster_name, selected_cluster):
-    # cluster = get_object_or_404(Clustering, title=cluster_name)
     cluster = Clustering.objects.filter(dish_name__exact=dish, title__icontains=cluster_name).first()
 
     selected_ids = []
