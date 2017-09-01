@@ -40,9 +40,9 @@ def analyze_trees(trees, cluster_labels, recipe_ids):
     actions_sorted = sorted(action_bins.items(), key=lambda p: sum(map(len, p[1])), reverse=True)
     ingredients_sorted = sorted(ingredient_bins.items(), key=lambda p: sum(map(len, p[1])), reverse=True)
     # top3_action = [k[0] for k in actions_sorted[:3]]
-    all_actions = [k[0] for k in actions_sorted[:5]]
+    all_actions = [k[0] for k in actions_sorted[:10]]
     # top3_ingredient = [k[0] for k in ingredients_sorted[:3]]
-    all_ingredients = [k[0] for k in ingredients_sorted[:5]]
+    all_ingredients = [k[0] for k in ingredients_sorted[:10]]
 
     result = {"actions": [], "ingredients": []}
     for action in all_actions:
