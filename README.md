@@ -26,3 +26,8 @@ python manage.py import_recipe --json_dirs ./recipes/potato_salad --name potatos
 python manage.py make_cluster --title potatosalad_dummy --dishname potatosalad
 ```
 Check out `recipe_api/management/commans/make_cluster.py` and `_dummy_cluster.py` for writing real clustering scripts
+
+4. Run using gunicorn
+```commandline
+GUNICORN_CMD_ARGS="--workers=5" gunicorn recipescape_api.wsgi
+```
