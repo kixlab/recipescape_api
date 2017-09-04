@@ -22,9 +22,9 @@ def new_recipe(request):
     :param request:
     :return: Recipe
     """
-    dt_20mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=20)
+    dt_5mins_ago = datetime.datetime.now() - datetime.timedelta(minutes=5)
     fresh_recipe = Recipe.objects.filter(annotation__isnull=True) \
-                                 .filter(last_assigned__lte=dt_20mins_ago) \
+                                 .filter(last_assigned__lte=dt_5mins_ago) \
                                  .order_by('group_name') \
                                  .first()
     fresh_recipe.last_assigned = timezone.now()
