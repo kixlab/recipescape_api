@@ -27,7 +27,9 @@ python manage.py make_cluster --title potatosalad_dummy --dishname potatosalad
 ```
 Check out `recipe_api/management/commans/make_cluster.py` and `_dummy_cluster.py` for writing real clustering scripts
 
-4. Run using gunicorn
+4. Run using gunicorn & caddy
 ```commandline
+python manage.py collectstatic
 gunicorn -w 5 recipescape_api.wsgi
+caddy
 ```

@@ -1,0 +1,8 @@
+https://recipe.hyeungshikjung.com {
+    gzip
+    proxy / localhost:8000 {
+        transparent
+        except /static
+    }
+    log / ./access.log "{remote} {when} {method} {uri} {status} {size} {latency} || {request} || BODY: {request_body}"
+}
