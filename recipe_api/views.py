@@ -1,3 +1,5 @@
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -15,6 +17,7 @@ def get_recipe(request, recipe_id):
     return Response(serializer.data)
 
 
+@cache_page(60)
 @api_view(['GET'])
 def get_recipes(request, dish):
     """
@@ -26,6 +29,7 @@ def get_recipes(request, dish):
     return Response(serializer.data)
 
 
+@cache_page(60)
 @api_view(['GET'])
 def get_clusters(request, dish):
     """
@@ -55,7 +59,7 @@ def get_trees_by_ids(request):
 
 @api_view(['GET'])
 def get_trees(request, dish):
-    annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
+    annotations = _get_annotations_by_dish(dish)
     trees = [{
         'id': annotation.recipe.origin_id,
         'tree': tree_util.make_tree(annotation.recipe, annotation)
@@ -68,7 +72,7 @@ def get_nodes(request, dish):
     """
     Return list of action and ingredients for each recipe
     """
-    annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
+    annotations = _get_annotations_by_dish(dish)
     nodes = []
     for annotation in annotations:
         node = tree_util.make_node(annotation.recipe, annotation)
@@ -105,6 +109,15 @@ def get_action_ingredient_histogram(request, dish):
     return Response(histogram)
 
 
+def _get_annotations_by_dish(dish):
+    cache_key = 'annotation_' + dish
+    annotations = cache.get(cache_key)
+    if not annotations:
+        annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
+        cache.set(cache_key, annotations, 60 * 10)
+    return annotations
+
+
 def _get_trees(dish, cluster_name, selected_cluster):
     cluster = Clustering.objects.filter(dish_name__exact=dish, title__icontains=cluster_name).first()
 
@@ -115,8 +128,7 @@ def _get_trees(dish, cluster_name, selected_cluster):
             selected_ids.append(p['recipe_id'])
             id_cluster_dict[p['recipe_id']] = p['cluster_no']
 
-    # I should've normalized table more...ㅜㅜㅜㅜㅜ
-    annotations = Annotation.objects.filter(recipe__group_name=dish).select_related('recipe')
+    annotations = _get_annotations_by_dish(dish)
     annotations_selected = [annotation for annotation in annotations
                             if annotation.recipe.origin_id in selected_ids]
     result = [(
