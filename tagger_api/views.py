@@ -107,22 +107,32 @@ def count_corrections(request, dishname):
     recipe_counts = Recipe.objects.filter(group_name=dishname).count()
     annotation_counts = len(annotations)
     tagged_action_pos_verb = 0
-    tagged_action_pos_nonverb = 0
+    tagged_action_pos_other = 0
+    tagged_ingr_pos_noun = 0
+    tagged_ingr_pos_other = 0
     for annotation in annotations:
         for word in annotation.annotations:
             if word['tag'] is 0:
-                location = word['index']
-                token = tree_util.get_token(annotation.recipe.instructions['instructions'], location)
+                token = tree_util.get_token(annotation.recipe.instructions['instructions'], word['index'])
                 pos = token['pos']
                 if pos[0] is 'V':
                     tagged_action_pos_verb += 1
                 else:
-                    tagged_action_pos_nonverb += 1
+                    tagged_action_pos_other += 1
+            if word['tag'] is 1:
+                token = tree_util.get_token(annotation.recipe.instructions['instructions'], word['index'])
+                pos = token['pos']
+                if pos[0] is 'N':
+                    tagged_ingr_pos_noun += 1
+                else:
+                    tagged_ingr_pos_other += 1
 
     return Response({
         'dishname': dishname,
         'total_recipes': recipe_counts,
         'tagged_recipes': annotation_counts,
         'tagged_action_pos_verb': tagged_action_pos_verb,
-        'tagged_action_pos_nonverb': tagged_action_pos_nonverb,
+        'tagged_action_pos_other': tagged_action_pos_other,
+        'tagged_ingr_pos_noun': tagged_ingr_pos_noun,
+        'tagged_ingr_pos_other': tagged_ingr_pos_other,
     })
