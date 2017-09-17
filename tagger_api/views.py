@@ -1,5 +1,7 @@
-import json
+import collections
 import datetime
+import json
+
 
 from django.db.models import Count
 from django.http import HttpResponse
@@ -106,33 +108,30 @@ def count_corrections(request, dishname):
     annotations = Annotation.objects.filter(recipe__group_name=dishname).select_related('recipe')
     recipe_counts = Recipe.objects.filter(group_name=dishname).count()
     annotation_counts = len(annotations)
-    tagged_action_pos_verb = 0
-    tagged_action_pos_other = 0
-    tagged_ingr_pos_noun = 0
-    tagged_ingr_pos_other = 0
+
+    table = collections.defaultdict(lambda: collections.defaultdict(int))
+
     for annotation in annotations:
-        for word in annotation.annotations:
-            if word['tag'] is 0:
-                token = tree_util.get_token(annotation.recipe.instructions['instructions'], word['index'])
-                pos = token['pos']
-                if pos[0] is 'V':
-                    tagged_action_pos_verb += 1
-                else:
-                    tagged_action_pos_other += 1
-            if word['tag'] is 1:
-                token = tree_util.get_token(annotation.recipe.instructions['instructions'], word['index'])
-                pos = token['pos']
-                if pos[0] is 'N':
-                    tagged_ingr_pos_noun += 1
-                else:
-                    tagged_ingr_pos_other += 1
+        merged_recipes = tree_util.merge_annotation_to_recipe(annotation.recipe, annotation)
+        for instruction in merged_recipes.instructions['instructions']:
+            for sentence in instruction:
+                for token in sentence['tokens']:
+                    pos = token['pos'][0] if token['pos'][0] in ['N', 'V'] else 'other'
+                    human = token.get('human', 2) # 0: action, 1:
+                    table[pos][human] += 1
+        print(merged_recipes)
 
     return Response({
         'dishname': dishname,
         'total_recipes': recipe_counts,
         'tagged_recipes': annotation_counts,
-        'tagged_action_pos_verb': tagged_action_pos_verb,
-        'tagged_action_pos_other': tagged_action_pos_other,
-        'tagged_ingr_pos_noun': tagged_ingr_pos_noun,
-        'tagged_ingr_pos_other': tagged_ingr_pos_other,
+        'tagged_action_pos_verb': table['V'][0],
+        'tagged_action_pos_noun': table['N'][0],
+        'tagged_action_pos_other': table['other'][0],
+        'tagged_ingr_pos_verb': table['V'][1],
+        'tagged_ingr_pos_noun': table['N'][1],
+        'tagged_ingr_pos_other': table['other'][1],
+        'tagged_other_pos_verb': table['V'][2],
+        'tagged_other_pos_noun': table['N'][2],
+        'tagged_other_pos_other': table['other'][2],
     })

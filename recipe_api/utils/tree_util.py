@@ -126,6 +126,16 @@ def get_token(instructions, index):
     return token
 
 
+def merge_annotation_to_recipe(recipe, annotation):
+    for word in annotation.annotations:
+        index = word['index']
+        sentences = recipe.instructions['instructions'][index[0]]
+        tokens = sentences[index[1]]
+        token = tokens['tokens'][index[2]]
+        token['human'] = word['tag']
+    return recipe
+
+
 # def into_proportion(items):
 #     counter = collections.Counter(items)
 #     total_count = sum(counter.values())
