@@ -33,3 +33,6 @@ python manage.py collectstatic
 gunicorn -w 5 recipescape_api.wsgi
 caddy
 ```
+
+## Recipe API
+[Quick swagger documentation](https://app.swaggerhub.com/apis/zxzl/recipescape/1.0.0)
