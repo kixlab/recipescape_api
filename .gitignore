@@ -1,7 +1,7 @@
-recipes/*
+recipescape_api/recipes/*
 .DS_Store
 .idea/*
-static/
+recipescape_api/static/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

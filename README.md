@@ -27,11 +27,29 @@ python manage.py make_cluster --title potatosalad_dummy --dishname potatosalad
 ```
 Check out `recipe_api/management/commans/make_cluster.py` and `_dummy_cluster.py` for writing real clustering scripts
 
-4. Run using gunicorn & caddy
+### Running locally
 ```commandline
 python manage.py collectstatic
 gunicorn -w 5 recipescape_api.wsgi
 caddy
+```
+
+### Running using Docker
+
+1. Restore DB
+```commandline
+docker-compose up -d db
+cat ${DUMP_FILE} | docker exec -i ${CONTAINER_NAME} psql -Upostgres
+```
+
+2. Develop mode
+```commandline
+docker-compose up
+```
+
+3. ~~Production~~ Deploy mode
+```commandline
+docker-compose -f docker-compose.yml -f docker-compose.deploy.yml up
 ```
 
 ## Recipe API

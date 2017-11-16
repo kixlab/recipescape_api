@@ -22,7 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '!$=_x5bta6)uha@-m21u_i-y)h)!s*maucg#l%l-9@!ac@d&j2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+DEBUG = True if os.environ.get('DEBUG', 'TRUE') == 'TRUE' else False
 
 ALLOWED_HOSTS = ['*']
 
@@ -87,10 +88,9 @@ WSGI_APPLICATION = 'recipescape_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('PG_NAME'),
         'USER': os.environ.get('PG_USER'),
-        'PASSWORD': os.environ.get('PG_PASSWORD'),
         'HOST': os.environ.get('PG_HOST'),
         'PORT': os.environ.get('PG_PORT'),
     }
