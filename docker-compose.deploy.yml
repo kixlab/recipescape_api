@@ -1,15 +1,8 @@
 version: "3"
 services:
   app:
-    build: .
-    env_file:
-      - .env
     environment:
       - DEBUG=FALSE
-    command: bash -c "python manage.py collectstatic --noinput && gunicorn -w 2 -b:8080 recipescape_api.wsgi"
-    volumes:
-      - ./recipescape_api:/src
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn --no-sendfile --reload -w 2 -b:8080 recipescape_api.wsgi"
     ports:
       - "8080:8080"
-    depends_on:
-      - db
