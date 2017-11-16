@@ -1,6 +1,6 @@
 https://recipe.hyeungshikjung.com {
     gzip
-    proxy / localhost:8000 {
+    proxy / localhost:8080 {
         transparent
         except /static
     }
