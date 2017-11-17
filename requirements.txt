@@ -21,3 +21,4 @@ urllib3==1.21.1
 scikit-learn==0.18.2
 numpy==1.13.1
 gunicorn
+django-redis
