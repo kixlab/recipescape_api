@@ -1,8 +1,11 @@
 https://recipe.hyeungshikjung.com {
+    root recipescape_api
     gzip
+
     proxy / localhost:8080 {
         transparent
         except /static
     }
+
     log / ./access.log "{remote} {when} {method} {uri} {status} {size} {latency} || {request} || BODY: {request_body}"
 }
