@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tagger_api.apps.TaggerApiConfig',
     'recipe_api.apps.RecipeApiConfig',
+    'mturk_scraper.apps.MturkScraperConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
