@@ -16,7 +16,7 @@ class Assignment(models.Model):
 
 class ScrapedRecipe(models.Model):
     scraped_by = models.ForeignKey(Assignment)
-    title = models.TextField()
+    title = models.CharField(max_length=100)
     image_url = models.URLField(null=True, blank=True)
     ingredients = models.TextField()
     instruction = models.TextField()

@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Visit {{ url }}</h3>
-    <div>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Save</button>
-        </form>
+    <h3>Visit <a href="{{ url }}">{{ url }}</a> then fill in the blanks</h3>
+    <form method="POST" class="ui form">
+        {% csrf_token %}
+        {% for field in scrape_form %}
+            <div class="field">
+                {{ field.errors }}
+                <label>{{ field.label_tag }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <p class="help">{{ field.help_text|safe }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+{#        {{ form.as_p }}#}
+        <button type="submit" class="ui primary button">Save</button>
+    </form>
     </div>
 
 {% endblock %}

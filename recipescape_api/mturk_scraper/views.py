@@ -22,7 +22,7 @@ def start_work(request):
 
     context = {
         'url': url.url,
-        'form': form,
+        'scrape_form': form,
     }
     return render(request, 'scrape.html', context)
 
@@ -44,7 +44,7 @@ def save_work(request):
 def find_url():
     url = RecipeURL.objects.annotate(
         num_finished=Count('assignment__finished_at'),
-    ).filter(num_finished__lt=3).first()
+    ).filter(num_finished__lt=20).first()
 
     return url
 
