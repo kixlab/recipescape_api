@@ -7,6 +7,7 @@ from .utils import generate_token
 class RecipeURL(models.Model):
     url = models.URLField()
     group_name = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Assignment(models.Model):
