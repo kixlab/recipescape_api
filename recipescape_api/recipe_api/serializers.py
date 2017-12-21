@@ -9,6 +9,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
         model = Recipe
         fields = ('origin_id', 'title', 'image_url', 'ingredients', 'sentences')
 
+
 class ClusteringSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Clustering
