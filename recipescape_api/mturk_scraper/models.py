@@ -1,5 +1,7 @@
 from django.db import models
-# Create your models here.
+import random
+import string
+from .utils import generate_token
 
 
 class RecipeURL(models.Model):
@@ -11,7 +13,7 @@ class Assignment(models.Model):
     url = models.ForeignKey(RecipeURL)
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
-    token = models.TextField()
+    token = models.CharField(max_length=10, default=generate_token)
 
 
 class ScrapedRecipe(models.Model):
@@ -20,3 +22,4 @@ class ScrapedRecipe(models.Model):
     image_url = models.URLField(null=True, blank=True)
     ingredients = models.TextField()
     instruction = models.TextField()
+
