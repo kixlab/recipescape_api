@@ -23,4 +23,3 @@ class ScrapedRecipe(models.Model):
     image_url = models.URLField(null=True, blank=True)
     ingredients = models.TextField()
     instruction = models.TextField()
-
