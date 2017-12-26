@@ -61,6 +61,6 @@ def show_result(request):
 def find_url():
     url = RecipeURL.objects.annotate(
         num_finished=Count('assignment__finished_at'),
-    ).filter(num_finished__lt=3).first()
+    ).order_by('num_finished').first()
 
     return url
