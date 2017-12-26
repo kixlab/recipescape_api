@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Visit <a href="{{ url }}">{{ url }}</a> then fill in the blanks</h3>
+    <h3>Visit <a target="_blank" href="{{ url }}">{{ url }}</a> then fill in the blanks</h3>
     <form method="POST" class="ui form">
         {% csrf_token %}
         {% for field in scrape_form %}
