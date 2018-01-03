@@ -9,6 +9,9 @@ class RecipeURL(models.Model):
     group_name = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.url
+
 
 class Assignment(models.Model):
     url = models.ForeignKey(RecipeURL)

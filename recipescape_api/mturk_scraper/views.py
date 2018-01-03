@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.utils import timezone
@@ -61,6 +61,7 @@ def show_result(request):
 def find_url():
     url = RecipeURL.objects.annotate(
         num_finished=Count('assignment__finished_at'),
-    ).order_by('num_finished').first()
+        last_assigned=Max('assignment__started_at'),
+    ).order_by('num_finished', 'last_assigned').first()
 
     return url
