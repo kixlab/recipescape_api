@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 1. Launch [Stanford CoreNLP Server](https://stanfordnlp.github.io/CoreNLP/corenlp-server.html)
 ```commandline
-docker run -p 9000:9000 --name coreNLP --rm -i -t motiz88/corenlp
+docker run -p 9000:9000 --name coreNLP --rm -it motiz88/corenlp
 ```
 
 2. Run insert script. Let's say that we want to put recipes for potato salad
