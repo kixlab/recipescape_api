@@ -4,6 +4,14 @@ from django.db.models import Count
 from .models import RecipeURL, Assignment, ScrapedRecipe
 
 
+class ScrapedRecipeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'get_group', )
+
+    def get_group(self, obj):
+        return obj.scraped_by.url.group_name
+    get_group.short_description = "Menu"
+
+
 class URLAdmin(admin.ModelAdmin):
     list_display = ('url', 'group_name', 'num_finished')
 
@@ -23,5 +31,5 @@ class AssignmentAdmin(admin.ModelAdmin):
 
 admin.site.register(RecipeURL, URLAdmin)
 admin.site.register(Assignment, AssignmentAdmin)
-admin.site.register(ScrapedRecipe)
+admin.site.register(ScrapedRecipe, ScrapedRecipeAdmin)
 

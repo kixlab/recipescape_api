@@ -2,3 +2,4 @@ PG_NAME=postgres
 PG_USER=postgres
 PG_HOST=db
 PG_PORT=5432
+PG_PASSWORD=yourpassword

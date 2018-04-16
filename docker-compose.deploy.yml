@@ -3,6 +3,6 @@ services:
   app:
     environment:
       - DEBUG=FALSE
-    command: bash -c "python manage.py collectstatic --noinput && gunicorn --no-sendfile --reload -w 2 -b:8080 recipescape_api.wsgi"
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn --no-sendfile --reload -b:8080 recipescape_api.wsgi"
     ports:
       - "8080:8080"

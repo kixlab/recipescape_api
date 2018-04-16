@@ -2,14 +2,6 @@ version: "3"
 services:
   redis:
     image: redis:4
-    ports:
-      - "6379:6379"
-  db:
-    image: postgres:9.6
-    volumes:
-      - 'postgres:/var/lib/postgresql/data'
-    ports:
-      - "5432:5432"
   app:
     build: .
     env_file:
@@ -20,7 +12,4 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
       - redis
-volumes:
-  postgres:
