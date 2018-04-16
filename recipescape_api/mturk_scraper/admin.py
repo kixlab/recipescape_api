@@ -5,7 +5,11 @@ from .models import RecipeURL, Assignment, ScrapedRecipe
 
 
 class ScrapedRecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', )
+    list_display = ('title', 'get_group', )
+
+    def get_group(self, obj):
+        return obj.scraped_by.url.group_name
+    get_group.short_description = "Menu"
 
 
 class URLAdmin(admin.ModelAdmin):
