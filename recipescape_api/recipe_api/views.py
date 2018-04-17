@@ -17,7 +17,7 @@ def get_recipe(request, recipe_id):
     return Response(serializer.data)
 
 
-@cache_page(60)
+@cache_page(600)
 @api_view(['GET'])
 def get_recipes(request, dish):
     """
@@ -29,7 +29,7 @@ def get_recipes(request, dish):
     return Response(serializer.data)
 
 
-@cache_page(60)
+@cache_page(600)
 @api_view(['GET'])
 def get_clusters(request, dish):
     """
@@ -41,6 +41,7 @@ def get_clusters(request, dish):
     return Response(serializer.data)
 
 
+@cache_page(600)
 @api_view(['POST'])
 def get_trees_by_ids(request):
     """
@@ -91,6 +92,7 @@ def get_nodes_by_ids(request):
     return Response(nodes)
 
 
+@cache_page(600)
 @api_view(['POST'])
 def get_histograms(request, dish):
     """
